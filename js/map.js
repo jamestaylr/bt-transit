@@ -15,6 +15,8 @@ function initialize() {
         scaleControl: true,
         streetViewControl: false,
         overviewMapControl: false,
+        scrollwheel: false,
+
         mapTypeId: google.maps.MapTypeId.ROADMAP,
 
         styles: [{
@@ -106,19 +108,13 @@ function initialize() {
 
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-    bus_marker = new RichMarker({
-        position: map.getCenter(),
-        map: map,
-        content: '<div class="bus"></div>',
-    });
-
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
-get_data();
+getRouteData();
 
-function get_data() {
+function getRouteData() {
     var data_request = new XMLHttpRequest();
     data_request.onreadystatechange = function() {
         if (data_request.readyState == 4 && data_request.status == 200) {
@@ -149,4 +145,37 @@ function createRoutes(json) {
         element.appendChild(route_label);
     }
 
+}
+
+getBusData();
+
+function getBusData() {
+
+    var data_request = new XMLHttpRequest();
+    data_request.onreadystatechange = function() {
+        if (data_request.readyState == 4 && data_request.status == 200) {
+
+            plotBuses(JSON.parse(data_request.responseText));
+        }
+    }
+
+    data_request.open("GET", "/currentBuses", true);
+    data_request.send();
+
+}
+
+function plotBuses(json) {
+    var buses = json['DocumentElement']['LatestInfoTable'];
+
+    for (var i = 0; i < buses.length; i++) {
+        var location = new google.maps.LatLng(buses[i]['Latitude'][0], buses[i]['Longitude'][0]);
+
+        var marker = new RichMarker({
+            position : location,
+            map : map,
+            content : '<div class="' + "bus" + '"></div>',
+        });
+    }
+
+    console.log(buses);
 }
