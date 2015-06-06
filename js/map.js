@@ -106,7 +106,7 @@ function initialize() {
 
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-    boat_marker = new RichMarker({
+    bus_marker = new RichMarker({
         position: map.getCenter(),
         map: map,
         content: '<div class="bus"></div>',
@@ -115,3 +115,38 @@ function initialize() {
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
+
+get_data();
+
+function get_data() {
+    var data_request = new XMLHttpRequest();
+    data_request.onreadystatechange = function() {
+        if (data_request.readyState == 4 && data_request.status == 200) {
+
+            createRoutes(JSON.parse(data_request.responseText));
+        }
+    }
+
+    data_request.open("GET", "/currentRoutes", true);
+    data_request.send();
+}
+
+function createRoutes(json) {
+    var element = document.getElementById("routes");
+    var routes = json['DocumentElement']['CurrentRoutes']
+
+    for (var i = 0; i < routes.length; i++) {
+
+        var route_label = document.createElement('label');
+        var route_input = document.createElement('input');
+        route_input.value = routes[i]['RouteShortName'][0];
+        route_input.type = "checkbox";
+
+        route_label.appendChild(route_input);
+
+        route_label.innerHTML += routes[i]['RouteName'][0];
+
+        element.appendChild(route_label);
+    }
+
+}
