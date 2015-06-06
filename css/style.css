@@ -2,6 +2,7 @@
 
 html, body, main, #map-canvas, #sidebar {
 	height: 100%;
+    overflow: hidden; /* Hids the main element overflow */
 	margin: 0;
 	padding: 0;
 	font-family: 'Roboto', sans-serif;
@@ -9,15 +10,22 @@ html, body, main, #map-canvas, #sidebar {
 
 #map-canvas {
 	width: calc(100% - (200px + 40px));
+    height: calc(100% - 20px); /* Padding plus navigation height */
 	float: right;
 }
 
 #sidebar {
 	width: 200px;
-	height: calc(100% - 40px);
+	height: calc(100% - (40px + 20px)); /* Padding plus navigation height */
 	float: left;
+    overflow: hidden;
 	padding: 20px;
 	line-height: 1.8em;
+}
+
+nav {
+    height: 20px;
+    background-color: rgb(146, 29, 82);
 }
 
 /* ------------------------------- */
@@ -117,4 +125,30 @@ hr {
     opacity: 0;
     filter: alpha(opacity=0);
   }
+}
+
+/* ------------------------------- */
+
+@media screen and (max-width: 650px){
+
+    /* Collapses article elements */
+    section {
+        float: none !important; /* Overrides specific presidence */
+        padding: 0;
+    }
+
+    #sidebar {
+        width: calc(100% - 40px);
+        height: auto;
+    }
+
+    #map-canvas {
+        width: 100%;
+
+    }
+
+    /* Adds spacing to collasped article elements */
+    section article:not(:first-child) {
+        padding-top: 25px;
+    }
 }
